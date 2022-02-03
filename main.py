@@ -1,6 +1,7 @@
 from itertools import cycle
+import sys
 
-BOARD = dict.fromkeys(range(9), " ")
+BOARD = {}
 
 
 def main():
@@ -10,6 +11,8 @@ def main():
 
 def play_game():
     # game setup
+    reset_board()
+
     is_game_over = False
     number_of_moves = 0
     player = cycle(range(2))
@@ -17,21 +20,32 @@ def play_game():
 
     while not is_game_over:
         print_board()
+
         # validate input from user
         while True:
             next_move = input(f"Player {current_player + 1} move? Type 1-9 : ")
+            if next_move == "exit":
+                sys.exit()
             try:
                 next_move = int(next_move)
             except ValueError:
+                print("Move not valid")
                 pass
             if next_move in range(1, 10):
-                break
+                if BOARD[next_move - 1] == " ":
+                    break
+                else:
+                    print("Move not available")
+            else:
+                print("Move not valid")
 
-        # update board with move and toggle to next player
+        # update board with move
         if current_player == 0:
             BOARD[next_move - 1] = 'x'
         else:
             BOARD[next_move - 1] = 'o'
+
+        # toggle to next player
         current_player = next(player)
         number_of_moves += 1
 
@@ -70,6 +84,11 @@ def print_board():
           f" {BOARD[3]} | {BOARD[4]} | {BOARD[5]} \n"
           f"-----------\n"
           f" {BOARD[6]} | {BOARD[7]} | {BOARD[8]} \n")
+
+
+def reset_board():
+    for i in range(9):
+        BOARD[i] = " "
 
 
 main()
